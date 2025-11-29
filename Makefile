@@ -165,6 +165,12 @@ $(RELEASE_AAB): version gradle-dependencies
 	(cd android && ./gradlew test bundleRelease)
 	install -C ./android/build/outputs/bundle/release/android-release.aab $@
 
+release-apks: version gradle-dependencies
+	@echo "Building release APK"
+	(cd android && ./gradlew test assembleRelease)
+	@echo "Copying APKs..."
+	cp android/build/outputs/apk/release/*-release.apk .
+
 # PLATFORM=tv signals to gradle that we should build for AndroidTV. The stamped
 # versionCode reserves its last digit for the variant: phone/tablet builds end
 # in 0 and TV builds end in 1, so the two are distinguishable in the Play Store.
