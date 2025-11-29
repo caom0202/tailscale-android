@@ -1,6 +1,7 @@
 name: Android CI
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -26,12 +27,26 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      # Restore Keystore
+      - name: Restore keystore
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/my-release-key.jks
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
       # Clean should essentially be a no-op, but make sure that it works.
       - name: Clean
         run: make clean
 
-      - name: Build APKs
-        run: make tailscale-debug.apk
+      - name: Build Release APK
+        env:
+          JKS_PATH: my-release-key.jks
+          JKS_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          JKS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: make release-apks
 
-      - name: Run tests
-        run: make test
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: tailscale-release-apks
+          path: "*.apk"

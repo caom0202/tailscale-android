@@ -76,6 +76,15 @@ android {
     flavorDimensions "version"
     namespace 'com.tailscale.ipn'
 
+    signingConfigs {
+        release {
+            storeFile file(System.getenv("JKS_PATH"))
+            storePassword System.getenv("JKS_PASSWORD")
+            keyAlias System.getenv("JKS_ALIAS")
+            keyPassword System.getenv("JKS_PASSWORD")
+        }
+    }
+
     buildTypes {
         applicationTest {
             initWith debug
@@ -97,10 +106,20 @@ android {
             proguardFiles getDefaultProguardFile(
                     'proguard-android-optimize.txt'),
                     'proguard-rules.pro'
+
+            signingConfig signingConfigs.release
         }
         release_tv {
             initWith release
             manifestPlaceholders.leanbackRequired = true
+        }
+    }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "arm64-v8a", "armeabi-v7a"
+            universalApk false
         }
     }
 

@@ -142,6 +142,12 @@ $(RELEASE_AAB): version gradle-dependencies
 	(cd android && ./gradlew test bundleRelease)
 	install -C ./android/build/outputs/bundle/release/android-release.aab $@
 
+release-apks: version gradle-dependencies
+	@echo "Building release APK"
+	(cd android && ./gradlew test assembleRelease)
+	@echo "Copying APKs..."
+	cp android/build/outputs/apk/release/*-release.apk .
+
 $(RELEASE_TV_AAB): version gradle-dependencies
 	@echo "Building TV release AAB"
 	(cd android && ./gradlew test bundleRelease_tv)
