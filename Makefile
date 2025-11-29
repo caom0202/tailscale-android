@@ -15,6 +15,7 @@ export TS_USE_TOOLCHAIN=1
 
 DEBUG_APK := tailscale-debug.apk
 RELEASE_AAB := tailscale-release.aab
+RELEASE_APK := tailscale-release.apk
 RELEASE_TV_AAB := tailscale-tv-release.aab
 
 # Define output filenames.
@@ -141,6 +142,11 @@ $(RELEASE_AAB): version gradle-dependencies
 	@echo "Building release AAB"
 	(cd android && ./gradlew test bundleRelease)
 	install -C ./android/build/outputs/bundle/release/android-release.aab $@
+
+$(RELEASE_APK): version gradle-dependencies
+	@echo "Building release APK"
+	(cd android && ./gradlew test assembleRelease)
+	install -C ./android/build/outputs/apk/release/android-release.apk $@
 
 $(RELEASE_TV_AAB): version gradle-dependencies
 	@echo "Building TV release AAB"
